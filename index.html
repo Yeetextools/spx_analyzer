@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPX500 US OPEN ANALYZER // YeetEX</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#13171c;--bg2:#191e24;--bg3:#1e242c;--bg4:#111519;--border:#26353f;--border2:#2e3d4a;--accent:#00e5ff;--bull:#00e676;--bear:#ff3d57;--warn:#ffb300;--muted:#4a6070;--text:#c8dae5;--text2:#7a9bb0;--text3:#3a5266;--mono:'IBM Plex Mono',monospace;--sans:'DM Sans',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:15px;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,.012) 2px,rgba(0,229,255,.012) 4px);pointer-events:none;z-index:9999;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:44px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:24px;height:24px;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--accent);letter-spacing:1px;}
+.logo-text{font-size:13.8px;font-weight:600;letter-spacing:3px;}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:2px;}
+.tabs{display:flex;gap:2px;}
+.tab{padding:4px 14px;font-size:12.5px;letter-spacing:1.5px;color:var(--muted);cursor:pointer;border:1px solid transparent;background:none;font-family:var(--mono);transition:all .15s;}
+.tab:hover{color:var(--text);border-color:var(--border2);}
+.tab.active{color:var(--accent);border-color:var(--accent);background:rgba(0,229,255,.05);}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.live-dot{width:5px;height:5px;border-radius:50%;animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.badge{display:flex;align-items:center;gap:5px;font-size:11.2px;letter-spacing:2px;}
+.clock{font-size:15px;color:var(--text2);letter-spacing:1px;}
+/* API BANNER */
+.api-banner{background:rgba(255,179,0,.06);border-bottom:1px solid rgba(255,179,0,.2);padding:8px 18px;display:flex;align-items:center;gap:10px;font-size:12.5px;}
+.api-banner.ok{background:rgba(0,230,118,.04);border-color:rgba(0,230,118,.15);}
+.api-input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:13.8px;padding:5px 10px;outline:none;width:300px;transition:border-color .2s;}
+.api-input:focus{border-color:var(--accent);}
+.api-input::placeholder{color:var(--text3);}
+.api-btn{background:none;border:1px solid var(--warn);color:var(--warn);font-family:var(--mono);font-size:11.2px;letter-spacing:2px;padding:5px 12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.api-btn:hover{background:rgba(255,179,0,.08);}
+/* TICKER */
+.ticker{background:var(--bg4);border-bottom:1px solid var(--border);height:24px;overflow:hidden;position:relative;}
+.ticker-inner{display:flex;position:absolute;white-space:nowrap;animation:tick 45s linear infinite;top:0;}
+.ticker-inner:hover{animation-play-state:paused;}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{padding:0 22px;font-size:12.5px;border-right:1px solid var(--border);line-height:24px;letter-spacing:.5px;}
+/* HERO */
+.hero{background:var(--bg2);padding:16px 20px;display:flex;align-items:center;gap:32px;border-bottom:1px solid var(--border);flex-wrap:wrap;position:relative;}
+.asset-label{font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:4px;}
+.main-price{font-size:47.5px;font-weight:600;letter-spacing:-1px;line-height:1;transition:color .3s;}
+.price-change{font-size:16.2px;margin-top:3px;}
+.divider-v{width:1px;height:52px;background:var(--border);}
+.stat{display:flex;flex-direction:column;gap:3px;}
+.stat-label{font-size:11.2px;letter-spacing:2px;color:var(--muted);}
+.stat-val{font-size:17.5px;font-weight:500;transition:all .3s;}
+.ses-block{margin-left:auto;text-align:right;}
+.ses-state{font-size:12.5px;letter-spacing:2px;padding:3px 8px;border:1px solid;display:inline-block;margin-bottom:5px;}
+.ses-timer{font-size:22.5px;color:var(--text2);letter-spacing:2px;}
+.refresh-btn{background:none;border:1px solid var(--border2);color:var(--muted);font-family:var(--mono);font-size:11.2px;letter-spacing:1px;padding:3px 10px;cursor:pointer;transition:all .2s;margin-left:8px;}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:248px 1fr 248px;gap:1px;background:var(--border);}
+.panel{background:var(--bg2);padding:14px;}
+.plabel{font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.pdot{width:4px;height:4px;background:var(--accent);border-radius:50%;}
+/* OR */
+.or-bar{position:relative;height:34px;background:var(--bg3);border:1px solid var(--border2);margin:5px 0;}
+.or-zone{position:absolute;top:0;bottom:0;background:rgba(0,229,255,.07);border-left:1px dashed rgba(0,229,255,.3);border-right:1px dashed rgba(0,229,255,.3);}
+.or-line{position:absolute;top:0;bottom:0;width:2px;transition:left .5s ease;}
+.or-line::after{content:attr(data-price);position:absolute;top:-14px;left:4px;font-size:10px;white-space:nowrap;}
+.or-val{font-size:21.2px;font-weight:600;transition:all .3s;}
+.vwap-blk{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--border2);background:var(--bg3);margin-top:6px;}
+.vwap-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.phase-track{display:flex;gap:2px;margin:7px 0 2px;}
+.phase-step{flex:1;height:3px;background:var(--border2);transition:background .3s;}
+.phase-step.done{background:var(--bull);}
+.phase-step.active{background:var(--accent);}
+.phase-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);}
+/* SIGNALS */
+.sig-list{display:flex;flex-direction:column;gap:5px;}
+.sig{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid transparent;transition:border-color .2s;}
+.sig:hover{border-color:var(--border2);}
+.sig-ico{font-size:16.2px;flex-shrink:0;margin-top:1px;}
+.sig-body{flex:1;}
+.sig-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:1px;}
+.sig-desc{font-size:12.5px;color:var(--text2);line-height:1.5;font-family:var(--sans);}
+.sig-time{font-size:11.2px;color:var(--muted);margin-top:2px;}
+.sig-badge{font-size:10px;letter-spacing:1.5px;padding:2px 5px;border:1px solid;flex-shrink:0;}
+.bias-wrap{height:5px;background:var(--bg3);border:1px solid var(--border2);overflow:hidden;border-radius:3px;margin:7px 0;}
+.bias-fill{height:100%;transition:width .8s ease,background .5s;border-radius:3px;}
+.bias-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:1px;}
+/* EVENTS */
+.ev{display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg3);border:1px solid var(--border);margin-bottom:3px;}
+.ev-time{font-size:12.5px;color:var(--accent);min-width:44px;}
+.ev-name{flex:1;font-size:12.5px;font-family:var(--sans);}
+.ev-imp{font-size:10px;letter-spacing:1px;padding:1px 4px;border:1px solid;}
+.sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:7px;}
+.sec{display:flex;justify-content:space-between;align-items:center;padding:5px 6px;background:var(--bg3);border:1px solid var(--border);}
+.sec-name{font-size:11.2px;color:var(--text2);}
+.sec-pct{font-size:12.5px;font-weight:600;}
+/* INPUTS */
+.ig{display:flex;flex-direction:column;gap:3px;margin-bottom:7px;}
+.il{font-size:11.2px;letter-spacing:2px;color:var(--muted);}
+.if{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:15px;padding:5px 9px;outline:none;width:100%;transition:border-color .2s;}
+.if:focus{border-color:var(--accent);}
+.if::placeholder{color:var(--text3);}
+.btn{background:none;border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:12.5px;letter-spacing:2px;padding:6px 14px;cursor:pointer;width:100%;transition:all .2s;margin-top:3px;}
+.btn:hover{background:rgba(0,229,255,.07);}
+.btn.bull{border-color:var(--bull);color:var(--bull);}
+.btn.bull:hover{background:rgba(0,230,118,.07);}
+.btn.bear{border-color:var(--bear);color:var(--bear);}
+.rres{background:var(--bg3);border:1px solid var(--border2);padding:9px;margin-top:7px;display:none;}
+.rres.show{display:block;}
+.rrow{display:flex;justify-content:space-between;padding:3px 0;font-size:12.5px;border-bottom:1px solid var(--border);}
+.rrow:last-child{border-bottom:none;}
+/* PLAY */
+.play{background:var(--bg3);border:1px solid var(--border);border-left:2px solid;padding:8px;font-size:12.5px;color:var(--text2);font-family:var(--sans);line-height:1.5;}
+.play-t{font-size:11.2px;letter-spacing:2px;font-family:var(--mono);font-weight:600;margin-bottom:4px;}
+/* CHECKLIST */
+.ci{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text2);cursor:pointer;}
+.ci:last-child{border-bottom:none;}
+.cb{width:13px;height:13px;border:1px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;}
+.cb.chk{background:rgba(0,230,118,.12);border-color:var(--bull);color:var(--bull);}
+.ci.done .ct{color:var(--muted);text-decoration:line-through;}
+/* JOURNAL */
+.je{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
+.je-date{font-size:11.2px;color:var(--muted);min-width:68px;}
+.je-body{flex:1;}
+.je-pnl{font-weight:600;min-width:50px;text-align:right;}
+/* SEP */
+.sep{grid-column:1/-1;background:var(--bg4);padding:4px 18px;font-size:10px;letter-spacing:4px;color:var(--text3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+/* TABS */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+/* UTILS */
+.bull-color{color:var(--bull);}
+.bear-color{color:var(--bear);}
+.warn-color{color:var(--warn);}
+.accent-color{color:var(--accent);}
+.muted-color{color:var(--muted);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panel{animation:fadeUp .3s ease both;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+select.if{cursor:pointer;}
+textarea.if{resize:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">YX</div>
+    <div><div class="logo-text">YEETEX</div><div class="logo-sub">SPX OPEN ANALYZER</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard',this)">DASHBOARD</button>
+    <button class="tab" onclick="switchTab('checklist',this)">CHECKLIST</button>
+    <button class="tab" onclick="switchTab('risk',this)">RISK CALC</button>
+    <button class="tab" onclick="switchTab('journal',this)">JOURNAL</button>
+  </div>
+  <div class="topbar-right">
+    <div class="badge"><div class="live-dot" id="ldot" style="background:var(--muted)"></div><span id="llabel" style="color:var(--muted);font-size:11.2px;letter-spacing:2px">OFFLINE</span></div>
+    <div class="clock" id="clk">--:--:-- ET</div>
+  </div>
+</div>
+
+<div class="api-banner" id="api-banner">
+  <span id="api-banner-label" style="color:var(--warn);letter-spacing:1px">⚠ FINNHUB API KEY REQUIRED — Free at finnhub.io/register (60 req/min)</span>
+  <input class="api-input" id="api-key" type="text" placeholder="Paste API key here...">
+  <button class="api-btn" onclick="connectAPI()">CONNECT</button>
+  <span id="api-msg" style="color:var(--muted);font-size:11.2px;letter-spacing:1px;margin-left:auto">Supports CORS · direct browser fetch · no backend needed</span>
+</div>
+
+<div class="ticker"><div class="ticker-inner" id="ticker-inner"><span class="tick-item muted-color">SPX500 US OPEN ANALYZER · YEETEX TOOLS · CONNECT FINNHUB API TO LOAD LIVE DATA</span></div></div>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="tab-content active">
+<div class="hero">
+  <div>
+    <div class="asset-label">S&P 500 · Yahoo Finance ^GSPC · Real Index</div>
+    <div class="main-price" id="price">—</div>
+    <div class="price-change" id="price-change"><span class="muted-color">Connect API →</span></div>
+  </div>
+  <div class="divider-v"></div>
+  <div style="display:flex;gap:26px;flex-wrap:wrap">
+    <div class="stat"><div class="stat-label">OPEN</div><div class="stat-val" id="s-o">—</div></div>
+    <div class="stat"><div class="stat-label">PREV CLOSE</div><div class="stat-val" id="s-pc">—</div></div>
+    <div class="stat"><div class="stat-label">HIGH</div><div class="stat-val bull-color" id="s-h">—</div></div>
+    <div class="stat"><div class="stat-label">LOW</div><div class="stat-val bear-color" id="s-l">—</div></div>
+    <div class="stat"><div class="stat-label">GAP %</div><div class="stat-val" id="s-gap">—</div></div>
+    <div class="stat"><div class="stat-label">OR HIGH</div><div class="stat-val bull-color" id="s-orh">—</div></div>
+    <div class="stat"><div class="stat-label">OR LOW</div><div class="stat-val bear-color" id="s-orl">—</div></div>
+    <div class="stat"><div class="stat-label">VWAP≈</div><div class="stat-val accent-color" id="s-vwap">—</div></div>
+  </div>
+  <div class="ses-block">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:5px">US SESSION</div>
+    <div class="ses-state" id="ses-state" style="border-color:var(--muted);color:var(--muted)">—</div>
+    <div class="ses-timer" id="ses-timer">--:--</div>
+  </div>
+  <div style="position:absolute;right:18px;bottom:10px;display:flex;align-items:center;gap:8px">
+    <span id="last-upd" style="font-size:11.2px;color:var(--text3)"></span>
+    <button class="refresh-btn" onclick="fetchAll()">↻ REFRESH</button>
+  </div>
+</div>
+
+<div class="layout">
+<!-- LEFT: OR -->
+<div class="panel">
+  <div class="plabel">OPENING RANGE <div class="pdot"></div></div>
+  <div class="phase-track">
+    <div class="phase-step" id="ph0"></div><div class="phase-step" id="ph1"></div>
+    <div class="phase-step" id="ph2"></div><div class="phase-step" id="ph3"></div>
+  </div>
+  <div class="phase-labels"><span>PRE</span><span>OR</span><span>ENTRY</span><span>TARGET</span></div>
+  <div style="margin-top:9px"><div style="font-size:11.2px;letter-spacing:2px;color:var(--muted)">OR HIGH</div><div class="or-val bull-color" id="or-h">—</div></div>
+  <div class="or-bar" id="or-bar">
+    <div class="or-zone" id="or-zone" style="left:30%;right:30%"></div>
+    <div class="or-line" id="or-line" style="left:50%;background:var(--warn)" data-price="—"></div>
+    <div style="position:absolute;top:2px;left:4px;font-size:10px;color:var(--muted)">OR BOX</div>
+  </div>
+  <div><div style="font-size:11.2px;letter-spacing:2px;color:var(--muted)">OR LOW</div><div class="or-val bear-color" id="or-l">—</div></div>
+  <div style="margin-top:5px;display:flex;justify-content:space-between;font-size:12.5px"><span class="muted-color">OR Size</span><span id="or-sz">—</span></div>
+  <div class="vwap-blk">
+    <div class="vwap-dot" id="vwap-dot" style="background:var(--muted)"></div>
+    <div><div style="font-size:11.2px;letter-spacing:1px;color:var(--text2)">VWAP STATUS</div><div style="font-size:12.5px;font-weight:600" id="vwap-lbl">WAITING FOR DATA</div></div>
+  </div>
+  <div style="margin-top:11px;padding-top:10px;border-top:1px solid var(--border)">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:6px">GAP ANALYSIS</div>
+    <div id="gap-badge" style="font-size:11.2px;letter-spacing:2px;padding:3px 7px;border:1px solid var(--muted);color:var(--muted);display:inline-block;margin-bottom:7px">—</div>
+    <div style="font-size:12.5px">
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span class="muted-color">Gap pts</span><span id="gap-pts">—</span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span class="muted-color">50% fill</span><span id="gap-50">—</span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0"><span class="muted-color">Full fill</span><span id="gap-ff">—</span></div>
+    </div>
+  </div>
+  <div style="margin-top:11px;padding-top:10px;border-top:1px solid var(--border)">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:7px">MANUAL OR OVERRIDE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+      <div class="ig"><div class="il">OR HIGH</div><input class="if" id="m-orh" type="number" placeholder="auto"></div>
+      <div class="ig"><div class="il">OR LOW</div><input class="if" id="m-orl" type="number" placeholder="auto"></div>
+    </div>
+    <button class="btn" style="font-size:11.2px" onclick="applyOR()">APPLY</button>
+  </div>
+</div>
+
+<!-- MID: SIGNALS -->
+<div class="panel">
+  <div class="plabel">SIGNAL ENGINE <span id="sig-ts" style="font-size:11.2px;color:var(--muted)">—</span></div>
+  <div style="margin-bottom:11px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+      <span style="font-size:11.2px;letter-spacing:2px;color:var(--muted)">DIRECTIONAL BIAS</span>
+      <span style="font-size:12.5px;font-weight:600" id="bias-main">—</span>
+    </div>
+    <div class="bias-wrap"><div class="bias-fill" id="bias-fill" style="width:50%;background:var(--muted)"></div></div>
+    <div class="bias-labels"><span>BEAR</span><span>NEUTRAL</span><span>BULL</span></div>
+  </div>
+  <div class="sig-list" id="sig-list">
+    <div class="sig" style="border-left-color:var(--muted)">
+      <div class="sig-ico">⏳</div>
+      <div class="sig-body"><div class="sig-title">WAITING FOR LIVE DATA</div><div class="sig-desc">Connect Finnhub API key to enable real-time signal generation from OR, VWAP, and gap data.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:13px;padding-top:11px;border-top:1px solid var(--border)">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:7px">US OPEN PLAYBOOK</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+      <div class="play" style="border-left-color:var(--bull)"><div class="play-t" style="color:var(--bull)">GAP & GO</div>Gap up · OR holds VWAP · Entry: OR High break+retest · SL: OR Low</div>
+      <div class="play" style="border-left-color:var(--warn)"><div class="play-t" style="color:var(--warn)">GAP FILL</div>Gap up → reject → below VWAP · Entry: OR Low break · TP: 50%→full</div>
+      <div class="play" style="border-left-color:var(--accent)"><div class="play-t" style="color:var(--accent)">V-RECOVERY</div>Gap down → reversal through VWAP · Entry: VWAP reclaim · SL: OR Low</div>
+      <div class="play" style="border-left-color:var(--bear)"><div class="play-t" style="color:var(--bear)">OR FADE</div>Weak extension · Reversal candle M5 · Entry: close back inside OR</div>
+    </div>
+    <div style="margin-top:7px;padding:8px;background:var(--bg3);border:1px solid var(--border);font-size:11.2px;color:var(--text2);font-family:var(--sans);line-height:1.7">
+      ① <b style="color:var(--text)">9:30–9:45</b> — OR FORMATION. Watch only, no trades.<br>
+      ② <b style="color:var(--text)">9:45–10:00</b> — Primary entry window. Full size.<br>
+      ③ <b style="color:var(--text)">10:00–10:30</b> — Secondary. Reduce size 50%.<br>
+      ④ <b style="color:var(--warn)">Always check macro events before entry.</b>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: MACRO + SECTORS -->
+<div class="panel">
+  <div class="plabel">MACRO TODAY <div class="pdot"></div></div>
+  <div id="evlist">
+    <div class="ev"><div class="ev-time">08:30</div><div class="ev-name">Initial Jobless Claims</div><div class="ev-imp warn-color" style="border-color:var(--warn)">MED</div></div>
+    <div class="ev"><div class="ev-time">10:00</div><div class="ev-name">ISM Services PMI</div><div class="ev-imp bear-color" style="border-color:var(--bear)">HIGH</div></div>
+    <div class="ev" style="opacity:.5"><div class="ev-time">14:00</div><div class="ev-name">Fed Speaker</div><div class="ev-imp muted-color" style="border-color:var(--muted)">LOW</div></div>
+    <div style="font-size:11.2px;color:var(--warn);margin-top:4px;padding:4px 6px;background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.15)">⚠ HIGH event 10:00 — exit by 09:50</div>
+  </div>
+  <div style="margin-top:13px;padding-top:11px;border-top:1px solid var(--border)">
+    <div class="plabel" style="margin-bottom:7px">SECTOR ETFs (LIVE) <div class="pdot"></div></div>
+    <div class="sector-grid" id="sec-grid">
+      <div class="sec"><span class="sec-name">XLK TECH</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLF FIN</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLV HLTH</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLE ENE</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLI IND</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLC COM</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLRE RE</span><span class="sec-pct muted-color">…</span></div>
+      <div class="sec"><span class="sec-name">XLU UTIL</span><span class="sec-pct muted-color">…</span></div>
+    </div>
+  </div>
+  <div style="margin-top:13px;padding-top:11px;border-top:1px solid var(--border)">
+    <div class="plabel" style="margin-bottom:7px">SESSION NOTES <div class="pdot"></div></div>
+    <textarea class="if" id="notes" style="height:80px" placeholder="// Gap: ...&#10;// Bias: ...&#10;// Plan: ..."></textarea>
+    <button class="btn" style="font-size:11.2px" onclick="saveNotes()">SAVE</button>
+  </div>
+  <div style="margin-top:10px">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:6px">DAY OUTCOME</div>
+    <div style="display:flex;gap:3px">
+      <button class="btn bull" style="font-size:11.2px;padding:4px" onclick="logDay('W')">✓ WIN</button>
+      <button class="btn bear" style="font-size:11.2px;padding:4px" onclick="logDay('L')">✗ LOSS</button>
+      <button class="btn" style="font-size:11.2px;padding:4px;border-color:var(--muted);color:var(--muted)" onclick="logDay('S')">— SKIP</button>
+    </div>
+    <div id="tdots" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;min-height:14px"></div>
+    <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:12.5px">
+      <span class="bull-color">W:<span id="wc">0</span></span>
+      <span class="bear-color">L:<span id="lc">0</span></span>
+      <span class="muted-color">S:<span id="sc">0</span></span>
+      <span class="accent-color">WR:<span id="wr">—</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="sep">RISK CALCULATOR · POSITION SIZER</div>
+
+<!-- BOTTOM LEFT: RISK -->
+<div class="panel">
+  <div class="plabel">POSITION SIZER <div class="pdot"></div></div>
+  <div class="ig"><div class="il">ACCOUNT ($)</div><input class="if" id="r-acc" type="number" value="10000"></div>
+  <div class="ig"><div class="il">RISK %</div><input class="if" id="r-risk" type="number" value="1"></div>
+  <div class="ig"><div class="il">ENTRY (auto-fills from live)</div><input class="if" id="r-entry" type="number" placeholder="—"></div>
+  <div class="ig"><div class="il">STOP LOSS</div><input class="if" id="r-sl" type="number" placeholder="OR Low"></div>
+  <div class="ig"><div class="il">TARGET</div><input class="if" id="r-tp" type="number" placeholder="OR High + ext"></div>
+  <div style="margin-bottom:6px">
+    <div class="il" style="margin-bottom:4px">INSTRUMENT</div>
+    <div style="display:flex;gap:3px">
+      <button class="btn" id="i-spy" style="font-size:11.2px;padding:4px;border-color:var(--accent);color:var(--accent)" onclick="setI('SPY',this)">SPY</button>
+      <button class="btn" id="i-mes" style="font-size:11.2px;padding:4px;border-color:var(--border2);color:var(--muted)" onclick="setI('MES',this)">MES 5×</button>
+      <button class="btn" id="i-es"  style="font-size:11.2px;padding:4px;border-color:var(--border2);color:var(--muted)" onclick="setI('ES',this)">ES 50×</button>
+    </div>
+    <div id="inst-note" style="font-size:11.2px;color:var(--muted);margin-top:3px">SPY: 1pt = $1 per share</div>
+  </div>
+  <button class="btn" onclick="calcR()">CALCULATE</button>
+  <div class="rres" id="rres">
+    <div class="rrow"><span class="muted-color">Risk $</span><span id="rr-d" class="bear-color">—</span></div>
+    <div class="rrow"><span class="muted-color">Stop dist</span><span id="rr-s">—</span></div>
+    <div class="rrow"><span class="muted-color">Qty</span><span id="rr-q" class="accent-color">—</span></div>
+    <div class="rrow"><span class="muted-color">R/R</span><span id="rr-rr" class="bull-color">—</span></div>
+    <div class="rrow"><span class="muted-color">Target P&L</span><span id="rr-p" class="bull-color">—</span></div>
+    <div id="rr-w" style="font-size:11.2px;margin-top:5px;padding:5px;background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.2);color:var(--warn);display:none"></div>
+  </div>
+</div>
+
+<!-- BOTTOM MID: DEBUG + DATA INFO -->
+<div class="panel">
+  <div class="plabel">LIVE DATA FEED <div class="pdot"></div></div>
+  <div id="raw" style="font-size:12.5px;color:var(--text2);line-height:2;font-family:var(--mono)">
+    <div class="muted-color">Awaiting API connection...</div>
+    <div style="margin-top:8px;font-size:11.2px;color:var(--text3)">Step 1: Get free key at finnhub.io/register<br>Step 2: Paste key → CONNECT<br>Step 3: Data auto-refreshes every 30s</div>
+  </div>
+  <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+    <div class="plabel" style="margin-bottom:7px">DATA SOURCES</div>
+    <div style="font-size:11.2px;color:var(--text2);line-height:2;font-family:var(--sans)">
+      <div>● <span class="bull-color">LIVE</span> Finnhub /quote — SPY × 10 ≈ SPX</div>
+      <div>● <span class="bull-color">LIVE</span> Finnhub /quote — 8 Sector ETFs</div>
+      <div>● <span class="warn-color">CALC</span> VWAP ≈ (H+L+O×2)/4</div>
+      <div>● <span class="warn-color">CALC</span> OR ≈ open ± day range heuristic</div>
+      <div>● <span class="muted-color">MANUAL</span> Exact OR via Override panel</div>
+      <div style="margin-top:5px;color:var(--text3)">For precise intraday OR: mark 9:30–9:45<br>range on your chart, enter in Override.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM RIGHT: ENTRY RULES -->
+<div class="panel">
+  <div class="plabel">ENTRY RULES <div class="pdot"></div></div>
+  <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-family:var(--sans)">
+    <div style="padding:8px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--text3)">
+      <span style="color:var(--warn);font-family:var(--mono);font-size:11.2px;letter-spacing:2px">9:30–9:45</span><br>
+      OR formation. <b style="color:var(--bear)">NO TRADES.</b> Mark H+L.
+    </div>
+    <div style="padding:8px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--bull)">
+      <span style="color:var(--bull);font-family:var(--mono);font-size:11.2px;letter-spacing:2px">9:45–10:00</span><br>
+      Primary window. Full size. OR break + retest.
+    </div>
+    <div style="padding:8px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--warn)">
+      <span style="color:var(--warn);font-family:var(--mono);font-size:11.2px;letter-spacing:2px">10:00–10:30</span><br>
+      Secondary. Reduce size 50%. Tighten stops.
+    </div>
+    <div style="padding:8px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--bear)">
+      <span style="color:var(--bear);font-family:var(--mono);font-size:11.2px;letter-spacing:2px">10:30+</span><br>
+      Avoid entries unless confirmed strong trend.
+    </div>
+    <div style="padding:8px;background:rgba(255,61,87,.04);border:1px solid rgba(255,61,87,.2);color:var(--text2)">
+      <b style="color:var(--bear)">HARD RULES:</b><br>
+      Max 2 losses → stop for the day.<br>
+      Move SL to BE after +1R.<br>
+      Close all before 10:30 if no trend.
+    </div>
+  </div>
+</div>
+</div><!-- end layout -->
+</div><!-- end dashboard -->
+
+<!-- CHECKLIST TAB -->
+<div id="tab-checklist" class="tab-content" style="padding:22px;max-width:660px;margin:0 auto">
+  <div style="font-size:12.5px;letter-spacing:3px;color:var(--muted);margin-bottom:16px">PRE-TRADE CHECKLIST</div>
+  <div id="cl-container"></div>
+  <div style="display:flex;gap:6px;margin-top:12px">
+    <button class="btn" onclick="resetCL()">RESET ALL</button>
+  </div>
+  <div style="margin-top:8px;font-size:12.5px;color:var(--muted)" id="cl-prog"></div>
+</div>
+
+<!-- RISK TAB -->
+<div id="tab-risk" class="tab-content" style="padding:22px;max-width:560px;margin:0 auto">
+  <div style="font-size:12.5px;letter-spacing:3px;color:var(--muted);margin-bottom:16px">ADVANCED RISK CALCULATOR</div>
+  <div style="border:1px solid var(--border);padding:13px;margin-bottom:9px">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--accent);margin-bottom:9px">ACCOUNT</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <div class="ig"><div class="il">ACCOUNT ($)</div><input class="if" id="a-acc" type="number" value="10000"></div>
+      <div class="ig"><div class="il">MAX DAILY LOSS %</div><input class="if" id="a-daily" type="number" value="2"></div>
+      <div class="ig"><div class="il">RISK PER TRADE %</div><input class="if" id="a-risk" type="number" value="1"></div>
+      <div class="ig"><div class="il">MAX TRADES/DAY</div><input class="if" id="a-maxt" type="number" value="3"></div>
+    </div>
+  </div>
+  <div style="border:1px solid var(--border);padding:13px;margin-bottom:9px">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--warn);margin-bottom:9px">TRADE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <div class="ig"><div class="il">ENTRY</div><input class="if" id="a-en" type="number" placeholder="from live data"></div>
+      <div class="ig"><div class="il">STOP LOSS</div><input class="if" id="a-sl" type="number"></div>
+      <div class="ig"><div class="il">TARGET 1</div><input class="if" id="a-t1" type="number"></div>
+      <div class="ig"><div class="il">TARGET 2</div><input class="if" id="a-t2" type="number"></div>
+    </div>
+    <div style="margin-top:5px">
+      <div class="il" style="margin-bottom:4px">INSTRUMENT</div>
+      <div style="display:flex;gap:3px">
+        <button class="btn" id="ai-spy" style="font-size:11.2px;padding:4px;border-color:var(--accent);color:var(--accent)" onclick="setI2('SPY',this)">SPY (1×)</button>
+        <button class="btn" id="ai-mes" style="font-size:11.2px;padding:4px;border-color:var(--border2);color:var(--muted)" onclick="setI2('MES',this)">MES (5×)</button>
+        <button class="btn" id="ai-es"  style="font-size:11.2px;padding:4px;border-color:var(--border2);color:var(--muted)" onclick="setI2('ES',this)">ES (50×)</button>
+      </div>
+    </div>
+    <button class="btn" style="margin-top:8px" onclick="calcAdv()">CALCULATE</button>
+  </div>
+  <div id="adv-res" style="border:1px solid var(--border);padding:13px;display:none">
+    <div style="font-size:11.2px;letter-spacing:3px;color:var(--bull);margin-bottom:9px">ANALYSIS</div>
+    <div id="adv-body"></div>
+  </div>
+</div>
+
+<!-- JOURNAL TAB -->
+<div id="tab-journal" class="tab-content" style="padding:22px">
+  <div style="font-size:12.5px;letter-spacing:3px;color:var(--muted);margin-bottom:16px">TRADE JOURNAL</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px">
+    <div style="border:1px solid var(--border);padding:13px">
+      <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:9px">NEW ENTRY</div>
+      <div class="ig"><div class="il">DATE</div><input class="if" id="j-date" type="date"></div>
+      <div class="ig"><div class="il">SETUP</div>
+        <select class="if" id="j-setup">
+          <option value="">Select...</option>
+          <option>Gap & Go Long</option><option>Gap & Go Short</option>
+          <option>Gap Fill Long</option><option>Gap Fill Short</option>
+          <option>V-Recovery</option><option>OR Fade Long</option><option>OR Fade Short</option><option>VWAP Bounce</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">
+        <div class="ig"><div class="il">ENTRY</div><input class="if" id="j-en" type="number"></div>
+        <div class="ig"><div class="il">EXIT</div><input class="if" id="j-ex" type="number"></div>
+        <div class="ig"><div class="il">PNL pts</div><input class="if" id="j-pnl" type="number"></div>
+      </div>
+      <div class="ig"><div class="il">NOTES</div><textarea class="if" id="j-notes" style="height:50px"></textarea></div>
+      <button class="btn bull" onclick="addJE()">+ ADD TRADE</button>
+    </div>
+    <div style="border:1px solid var(--border);padding:13px">
+      <div style="font-size:11.2px;letter-spacing:3px;color:var(--muted);margin-bottom:9px">STATS</div>
+      <div id="j-stats"><div class="muted-color" style="font-size:12.5px">No entries</div></div>
+    </div>
+  </div>
+  <div style="border:1px solid var(--border)">
+    <div style="padding:8px 13px;border-bottom:1px solid var(--border);font-size:11.2px;letter-spacing:3px;color:var(--muted)">TRADE LOG</div>
+    <div id="j-list" style="max-height:260px;overflow-y:auto;padding:9px 13px"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// YeetEX SPX500 US Open Analyzer
+// Data: Yahoo Finance ^GSPC (price) + Finnhub (sectors)
+// News: Tradingeconomics calendar via AllOrigins CORS proxy
+// GitHub Pages compatible — pure browser, no backend
+// ═══════════════════════════════════════════════════════════
+
+// ── STATE ────────────────────────────────────────────────
+let KEY = localStorage.getItem('yeetex-fh-key') || '';
+let D   = {};
+let inst = 'SPY', inst2 = 'SPY';
+const MULT  = { SPY:1, MES:5, ES:50 };
+const INOTE = { SPY:'SPY: 1pt = $1 per share', MES:'MES: $5 per point', ES:'ES: $50 per point' };
+
+// ── INIT ─────────────────────────────────────────────────
+window.onload = () => {
+  if (KEY) { document.getElementById('api-key').value = '••••••••••••'; setOK(); }
+  fetchSPX();                          // always fetch price — no key needed
+  setInterval(fetchSPX, 30000);        // refresh every 30s
+  fetchCalendar();                     // economic calendar
+  setInterval(fetchCalendar, 300000);  // refresh calendar every 5 min
+  if (KEY) { fetchSectors(); setInterval(fetchSectors, 60000); }
+  loadNotes();
+  buildCL();
+  renderTracker();
+  renderJournal();
+  document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
+  updateClock();
+  setInterval(updateClock, 1000);
+};
+
+// ── FINNHUB SECTORS (optional key) ───────────────────────
+async function connectAPI() {
+  const k = document.getElementById('api-key').value.trim();
+  if (!k) return;
+  try {
+    const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=XLK&token=${k}`);
+    const d = await r.json();
+    if (d.c > 0) {
+      KEY = k;
+      localStorage.setItem('yeetex-fh-key', k);
+      setOK();
+      fetchSectors();
+      setInterval(fetchSectors, 60000);
+    } else { setErr('Invalid Finnhub key'); }
+  } catch(e) { setErr('Finnhub connection failed'); }
+}
+
+function setOK() {
+  const b = document.getElementById('api-banner');
+  b.classList.add('ok');
+  document.getElementById('api-banner-label').textContent = '✓ FINNHUB CONNECTED — Sector ETFs active';
+  document.getElementById('api-banner-label').style.color = 'var(--bull)';
+  document.getElementById('api-msg').textContent = 'SPX: Yahoo ^GSPC · Sectors: Finnhub · Calendar: TradingEconomics';
+  document.getElementById('api-msg').style.color = 'var(--bull)';
+  document.getElementById('ldot').style.background = 'var(--bull)';
+  document.getElementById('llabel').textContent = 'LIVE';
+  document.getElementById('llabel').style.color = 'var(--bull)';
+}
+function setErr(msg) {
+  document.getElementById('api-msg').textContent = '✗ ' + msg;
+  document.getElementById('api-msg').style.color = 'var(--bear)';
+}
+
+// ── SPX PRICE — цепочка из 3 источников с CORS-прокси ────
+// GitHub Pages не может делать прямые запросы к Yahoo (CORS блок).
+// Пробуем по порядку: allorigins → corsproxy → Finnhub fallback
+async function fetchSPX() {
+  const YF1 = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=2d';
+  const YF2 = 'https://query2.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=2d';
+
+  const strategies = [
+    async () => {
+      const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(YF1));
+      if (!r.ok) throw new Error('allorigins ' + r.status);
+      const w = await r.json();
+      return JSON.parse(w.contents);
+    },
+    async () => {
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(YF2));
+      if (!r.ok) throw new Error('corsproxy ' + r.status);
+      return r.json();
+    },
+    async () => {
+      if (!KEY) throw new Error('no key');
+      const r = await fetch('https://finnhub.io/api/v1/quote?symbol=SPY&token=' + KEY);
+      if (!r.ok) throw new Error('finnhub ' + r.status);
+      const d = await r.json();
+      if (!d.c) throw new Error('finnhub no data');
+      return { _fh: true, c: d.c*10, o: d.o*10, h: d.h*10, l: d.l*10, pc: d.pc*10 };
+    },
+  ];
+
+  for (let i = 0; i < strategies.length; i++) {
+    try {
+      const raw = await strategies[i]();
+      let cur, prev, open, high, low;
+      if (raw._fh) {
+        cur=raw.c; open=raw.o; high=raw.h; low=raw.l; prev=raw.pc;
+      } else {
+        const meta = raw?.chart?.result?.[0]?.meta;
+        if (!meta || !meta.regularMarketPrice) throw new Error('no price');
+        cur=meta.regularMarketPrice;
+        prev=meta.chartPreviousClose||meta.previousClose||cur;
+        open=meta.regularMarketOpen||cur;
+        high=meta.regularMarketDayHigh||cur;
+        low=meta.regularMarketDayLow||cur;
+      }
+      if (!cur || cur <= 0) throw new Error('bad price');
+
+      D.cur=cur; D.open=open; D.high=high; D.low=low; D.prev=prev;
+      D.chg=cur-prev; D.pct=(D.chg/prev)*100;
+      D.vwap=(high+low+open*2)/4;
+      const rng=high-low; D.orH=open+rng*0.25; D.orL=open-rng*0.25;
+
+      document.getElementById('r-entry').placeholder = cur.toFixed(2);
+      document.getElementById('a-en').placeholder    = cur.toFixed(2);
+      document.getElementById('ldot').style.background = 'var(--bull)';
+      document.getElementById('llabel').textContent    = 'LIVE';
+      document.getElementById('llabel').style.color    = 'var(--bull)';
+
+      renderHero(); renderOR(); renderSignals(); renderRaw(); renderTicker();
+      const t = new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const src = raw._fh ? 'Finnhub SPY×10' : 'Yahoo ^GSPC (proxy ' + (i+1) + ')';
+      document.getElementById('last-upd').textContent = 'Updated ' + t + ' ET · ' + src;
+      return;
+    } catch(e) {
+      console.warn('Strategy ' + (i+1) + ' failed:', e.message);
+    }
+  }
+  document.getElementById('last-upd').textContent = '⚠ Price unavailable — click REFRESH';
+  document.getElementById('ldot').style.background = 'var(--bear)';
+}
+
+// ── SECTORS — Finnhub (optional) ─────────────────────────
+async function fetchSectors() {
+  if (!KEY) return;
+  const tickers = ['XLK','XLF','XLV','XLE','XLI','XLC','XLRE','XLU'];
+  const labels  = ['TECH','FIN','HLTH','ENE','IND','COM','RE','UTIL'];
+  const res = await Promise.all(tickers.map(s =>
+    fetch(`https://finnhub.io/api/v1/quote?symbol=${s}&token=${KEY}`).then(r=>r.json()).catch(()=>null)
+  ));
+  const g = document.getElementById('sec-grid');
+  g.innerHTML = res.map((d,i) => {
+    const p = d && d.pc ? (d.c - d.pc) / d.pc * 100 : null;
+    const c = p === null ? 'muted-color' : p > 0.1 ? 'bull-color' : p < -0.1 ? 'bear-color' : 'muted-color';
+    const v = p === null ? '—' : (p>=0?'+':'') + p.toFixed(2)+'%';
+    return `<div class="sec"><span class="sec-name">${tickers[i]} ${labels[i]}</span><span class="sec-pct ${c}">${v}</span></div>`;
+  }).join('');
+}
+
+// ── ECONOMIC CALENDAR — TradingEconomics via AllOrigins ──
+// AllOrigins is a free CORS proxy: allorigins.win
+// Fetches tradingeconomics.com/calendar JSON endpoint
+async function fetchCalendar() {
+  const calEl = document.getElementById('evlist');
+  calEl.innerHTML = '<div class="muted-color" style="font-size:11.25px">Loading calendar...</div>';
+
+  try {
+    // TradingEconomics public calendar JSON (US events)
+    const today = new Date().toISOString().split('T')[0];
+    const teUrl = `https://tradingeconomics.com/calendar?c=united+states&format=json&d1=${today}&d2=${today}`;
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(teUrl)}`;
+
+    const r = await fetch(proxyUrl);
+    if (!r.ok) throw new Error('AllOrigins failed');
+    const wrapper = await r.json();
+    const events  = JSON.parse(wrapper.contents);
+
+    if (!Array.isArray(events) || events.length === 0) {
+      throw new Error('No events');
+    }
+
+    // Filter and sort US events
+    const usEvents = events
+      .filter(e => e.Country === 'United States')
+      .sort((a, b) => a.Date.localeCompare(b.Date))
+      .slice(0, 8);
+
+    renderCalendar(usEvents);
+  } catch(e) {
+    // Fallback: try alternative free calendar API
+    try {
+      await fetchCalendarFallback();
+    } catch(e2) {
+      renderCalendarStatic();
+    }
+  }
+}
+
+async function fetchCalendarFallback() {
+  // Fallback: use a different free economic data source
+  // marketaux.com free tier or fmpcloud calendar
+  const today = new Date().toISOString().split('T')[0];
+  const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://tradingeconomics.com/united-states/calendar')}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Fallback failed');
+  // Parse HTML response for calendar table
+  const wrapper = await r.json();
+  const html = wrapper.contents;
+  // Simple regex extraction from TE HTML
+  const rows = [];
+  const rowRe = /<tr[^>]*data-url[^>]*>([\s\S]*?)<\/tr>/gi;
+  let m;
+  while ((m = rowRe.exec(html)) !== null && rows.length < 8) {
+    const row = m[1];
+    const timeM  = row.match(/datetime="([^"]+)"/);
+    const nameM  = row.match(/class="[^"]*event[^"]*"[^>]*>([^<]+)</i) || row.match(/<td[^>]*>\s*<a[^>]*>([^<]+)<\/a>/i);
+    const impM   = row.match(/importance-(\w+)/i);
+    if (timeM && nameM) {
+      rows.push({
+        Date: timeM[1],
+        Event: nameM[1].trim(),
+        Importance: impM ? impM[1] : 'low',
+      });
+    }
+  }
+  if (rows.length === 0) throw new Error('No events in HTML');
+  renderCalendar(rows, true);
+}
+
+function renderCalendar(events, isHtml = false) {
+  const calEl = document.getElementById('evlist');
+  if (!events || events.length === 0) { renderCalendarStatic(); return; }
+
+  const impColor = imp => {
+    const s = (imp || '').toString().toLowerCase();
+    if (s === '3' || s === 'high')   return { c:'var(--bear)',  label:'HIGH' };
+    if (s === '2' || s === 'medium') return { c:'var(--warn)',  label:'MED'  };
+    return                                  { c:'var(--muted)', label:'LOW'  };
+  };
+
+  const hasHighToday = events.some(e => {
+    const imp = (e.Importance||e.importance||'').toString().toLowerCase();
+    return imp === '3' || imp === 'high';
+  });
+
+  let html = events.map(e => {
+    const rawTime = e.Date || e.date || '';
+    const dt = new Date(rawTime);
+    const etTime = isNaN(dt) ? rawTime.slice(11,16) :
+      dt.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false});
+    const name = (e.Event || e.event || e.Name || e.indicator || '—').replace(/&amp;/g,'&').trim();
+    const imp  = impColor(e.Importance || e.importance || '1');
+    return `<div class="ev">
+      <div class="ev-time">${etTime}</div>
+      <div class="ev-name">${name}</div>
+      <div class="ev-imp" style="border-color:${imp.c};color:${imp.c}">${imp.label}</div>
+    </div>`;
+  }).join('');
+
+  if (hasHighToday) {
+    // Find the HIGH event time to warn
+    const highEv = events.find(e => {
+      const imp = (e.Importance||e.importance||'').toString().toLowerCase();
+      return imp === '3' || imp === 'high';
+    });
+    const dt = highEv ? new Date(highEv.Date||highEv.date||'') : null;
+    const etTime = dt && !isNaN(dt) ?
+      dt.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false}) : '?';
+    html += `<div style="font-size:11.25px;color:var(--warn);margin-top:5px;padding:4px 6px;background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.15)">⚠ HIGH @ ${etTime} — exit by ${etTime.replace(/:\d+$/,':00').replace(/^(\d+)/,n=>String(parseInt(n)-1).padStart(2,'0'))}</div>`;
+  }
+
+  html += `<div style="font-size:10px;color:var(--text3);margin-top:5px;text-align:right">via TradingEconomics · ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  calEl.innerHTML = html;
+}
+
+function renderCalendarStatic() {
+  // Static fallback with today's known schedule structure
+  document.getElementById('evlist').innerHTML = `
+    <div style="font-size:11.25px;color:var(--muted);margin-bottom:6px">Calendar offline — check manually:</div>
+    <div style="font-size:11.25px;color:var(--text2);font-family:var(--sans);line-height:2">
+      → <a href="https://tradingeconomics.com/calendar" target="_blank" style="color:var(--accent)">tradingeconomics.com/calendar</a><br>
+      → <a href="https://www.investing.com/economic-calendar" target="_blank" style="color:var(--accent)">investing.com/economic-calendar</a><br>
+      → <a href="https://www.federalreserve.gov/releases/h15/" target="_blank" style="color:var(--accent)">Fed Reserve releases</a>
+    </div>`;
+}
+
+// ── ALL FETCH ────────────────────────────────────────────
+async function fetchAll() {
+  await fetchSPX();
+  if (KEY) await fetchSectors();
+}
+
+// ── RENDER ───────────────────────────────────────────────
+const f = (v, d=2) => v != null ? v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+
+function renderHero() {
+  const {cur,open,high,low,prev,chg,pct} = D;
+  const pos = chg >= 0;
+  document.getElementById('price').textContent = f(cur);
+  document.getElementById('price').style.color = pos ? 'var(--bull)' : 'var(--bear)';
+  document.getElementById('price-change').innerHTML =
+    `<span class="${pos?'bull-color':'bear-color'}">${pos?'▲':'▼'} ${pos?'+':''}${f(chg)} (${pos?'+':''}${pct.toFixed(2)}%)</span> <span class="muted-color">vs prev close</span>`;
+  document.getElementById('s-o').textContent   = f(open);
+  document.getElementById('s-pc').textContent  = f(prev);
+  document.getElementById('s-h').textContent   = f(high);
+  document.getElementById('s-l').textContent   = f(low);
+  document.getElementById('s-gap').textContent = (pct>=0?'+':'')+pct.toFixed(2)+'%';
+  document.getElementById('s-gap').className   = 'stat-val '+(pos?'bull-color':'bear-color');
+}
+
+function renderOR() {
+  const {cur,prev,chg,pct,vwap} = D;
+  if (!cur) return;
+  const mH = parseFloat(document.getElementById('m-orh').value) || D.orH;
+  const mL = parseFloat(document.getElementById('m-orl').value) || D.orL;
+  if (!mH || !mL) return;
+
+  document.getElementById('or-h').textContent  = f(mH);
+  document.getElementById('or-l').textContent  = f(mL);
+  document.getElementById('or-sz').textContent = (mH-mL).toFixed(1)+' pts';
+  document.getElementById('s-orh').textContent = f(mH);
+  document.getElementById('s-orl').textContent = f(mL);
+  document.getElementById('s-vwap').textContent = f(vwap);
+
+  const pad = (mH-mL)*0.7, bMin=mL-pad, bMax=mH+pad, bR=bMax-bMin;
+  document.getElementById('or-zone').style.left  = ((mL-bMin)/bR*100)+'%';
+  document.getElementById('or-zone').style.right = ((bMax-mH)/bR*100)+'%';
+  const cp = Math.max(2,Math.min(98,(cur-bMin)/bR*100));
+  document.getElementById('or-line').style.left = cp+'%';
+  document.getElementById('or-line').setAttribute('data-price', cur.toFixed(0));
+
+  const abV = cur > vwap;
+  document.getElementById('vwap-dot').style.background = abV ? 'var(--bull)' : 'var(--bear)';
+  const vl = document.getElementById('vwap-lbl');
+  vl.textContent = abV ? 'ABOVE VWAP → BULLISH' : 'BELOW VWAP → BEARISH';
+  vl.style.color = abV ? 'var(--bull)' : 'var(--bear)';
+  vl.style.fontSize = '12.5px';
+  vl.style.fontWeight = '600';
+
+  const gb = document.getElementById('gap-badge');
+  if (pct > 0.15) { gb.textContent='GAP UP'; gb.style.borderColor='var(--bull)'; gb.style.color='var(--bull)'; }
+  else if (pct < -0.15) { gb.textContent='GAP DOWN'; gb.style.borderColor='var(--bear)'; gb.style.color='var(--bear)'; }
+  else { gb.textContent='FLAT OPEN'; gb.style.borderColor='var(--warn)'; gb.style.color='var(--warn)'; }
+
+  const gPts = cur - prev;
+  document.getElementById('gap-pts').textContent = (gPts>=0?'+':'')+f(gPts)+' pts';
+  document.getElementById('gap-pts').style.color = gPts>=0?'var(--bull)':'var(--bear)';
+  document.getElementById('gap-50').textContent  = f(prev+gPts*0.5);
+  document.getElementById('gap-ff').textContent  = f(prev);
+}
+
+function renderSignals() {
+  const {cur,prev,pct,vwap,orH,orL,chg} = D;
+  if (!cur) return;
+  const mH = parseFloat(document.getElementById('m-orh').value) || orH;
+  const mL = parseFloat(document.getElementById('m-orl').value) || orL;
+  const abV = vwap ? cur > vwap : null;
+  const inOR = mH&&mL ? cur>=mL&&cur<=mH : null;
+  const abOR = mH ? cur > mH : null;
+  const blOR = mL ? cur < mL : null;
+  const gUp = pct > 0.15, gDn = pct < -0.15;
+
+  let bias = 50;
+  if (gUp) bias+=12; if (gDn) bias-=12;
+  if (abV===true) bias+=12; if (abV===false) bias-=12;
+  if (abOR) bias+=8; if (blOR) bias-=8;
+  if (cur > prev) bias+=5; else bias-=5;
+  bias = Math.max(10,Math.min(90,bias));
+
+  const bc = bias>58?'var(--bull)':bias<42?'var(--bear)':'var(--warn)';
+  const bt = bias>58?`BULLISH ${bias}%`:bias<42?`BEARISH ${100-bias}%`:'NEUTRAL';
+  document.getElementById('bias-fill').style.width = bias+'%';
+  document.getElementById('bias-fill').style.background = bc;
+  document.getElementById('bias-main').textContent = bt;
+  document.getElementById('bias-main').style.color = bc;
+
+  const ov = v => v!=null ? f(v) : '?';
+  const sigs = [];
+  if (gUp&&abV&&inOR)  sigs.push({ico:'🟢',t:'GAP & GO SETUP',d:`+${pct.toFixed(2)}% gap. OR above VWAP (${ov(vwap)}). Watch OR High (${ov(mH)}) breakout + retest.`,ts:'LIVE · LONG BIAS',badge:'LONG',bc:'var(--bull)'});
+  if (abOR&&abV)       sigs.push({ico:'🟢',t:'OR BREAKOUT LONG',d:`Above OR High (${ov(mH)}). Entry on retest. TP: ${mH?(mH+(mH-mL)*1.5).toFixed(2):'?'} SL: OR Low (${ov(mL)}).`,ts:'LIVE · ENTER RETEST',badge:'LONG',bc:'var(--bull)'});
+  if (gUp&&abV===false) sigs.push({ico:'🟡',t:'GAP FILL SCENARIO',d:`Gap up but below VWAP (${ov(vwap)}). Fill: 50% = ${f(prev+chg*0.5)}, Full = ${f(prev)}.`,ts:'LIVE · SHORT BIAS',badge:'SHORT',bc:'var(--bear)'});
+  if (gDn&&!abV&&inOR) sigs.push({ico:'🟡',t:'V-RECOVERY WATCH',d:`Gap down ${Math.abs(pct).toFixed(2)}%. VWAP (${ov(vwap)}) reclaim = bullish switch. SL: OR Low.`,ts:'LIVE · WATCHING',badge:'WATCH',bc:'var(--warn)'});
+  if (gDn&&abV)        sigs.push({ico:'🟢',t:'V-RECOVERY ACTIVE',d:`Reversed above VWAP after gap down. Target OR High (${ov(mH)}) → prev close (${f(prev)}).`,ts:'LIVE · BULLISH',badge:'LONG',bc:'var(--bull)'});
+  if (!gUp&&!gDn&&inOR) sigs.push({ico:'🟡',t:'FLAT OPEN — WAIT OR BREAK',d:`Small gap (${pct.toFixed(2)}%). Inside OR. Wait M5 close outside range.`,ts:'LIVE · WAIT',badge:'WAIT',bc:'var(--warn)'});
+  if (blOR)            sigs.push({ico:'🔴',t:'BELOW OR — BEARISH',d:`Broke below OR Low (${ov(mL)}). VWAP as resistance. Next support: ${f(prev)}.`,ts:'LIVE · SHORT BIAS',badge:'SHORT',bc:'var(--bear)'});
+  sigs.push({ico:'⬜',t:abV?'BEAR WATCH':'BULL WATCH',
+    d:abV?`VWAP (${ov(vwap)}) key level. M5 close below triggers bias shift.`:`VWAP reclaim (${ov(vwap)}) needed. Hold 2× M5 above = bullish.`,
+    ts:'MONITORING',badge:abV?'SHORT':'LONG',bc:'var(--muted)'});
+
+  const now = new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('sig-ts').textContent = now+' ET';
+  document.getElementById('sig-list').innerHTML = sigs.map(s=>
+    `<div class="sig" style="border-left-color:${s.bc}">
+      <div class="sig-ico">${s.ico}</div>
+      <div class="sig-body"><div class="sig-title">${s.t}</div><div class="sig-desc">${s.d}</div><div class="sig-time">${s.ts}</div></div>
+      <div class="sig-badge" style="border-color:${s.bc};color:${s.bc}">${s.badge}</div>
+    </div>`
+  ).join('');
+}
+
+function renderRaw() {
+  const {cur,open,high,low,prev,chg,pct,vwap,orH,orL} = D;
+  if (!cur) return;
+  document.getElementById('raw').innerHTML = `
+    <div><span class="muted-color">Source    </span> Yahoo Finance ^GSPC</div>
+    <div><span class="muted-color">Current   </span> <span class="accent-color">${f(cur)}</span></div>
+    <div><span class="muted-color">Open      </span> ${f(open)}</div>
+    <div><span class="muted-color">High      </span> <span class="bull-color">${f(high)}</span></div>
+    <div><span class="muted-color">Low       </span> <span class="bear-color">${f(low)}</span></div>
+    <div><span class="muted-color">Prev Close</span> ${f(prev)}</div>
+    <div><span class="muted-color">Change    </span> <span class="${chg>=0?'bull-color':'bear-color'}">${chg>=0?'+':''}${f(chg)} / ${pct>=0?'+':''}${pct.toFixed(3)}%</span></div>
+    <div><span class="muted-color">VWAP≈     </span> <span class="accent-color">${f(vwap)}</span></div>
+    <div><span class="muted-color">OR High≈  </span> <span class="bull-color">${f(orH)}</span></div>
+    <div><span class="muted-color">OR Low≈   </span> <span class="bear-color">${f(orL)}</span></div>
+    <div style="margin-top:5px;font-size:10px;color:var(--text3)">Real SPX index · No key needed · 15-min delay</div>
+  `;
+}
+
+function renderTicker() {
+  const {cur,chg,pct,high,low,open,prev,vwap} = D;
+  if (!cur) return;
+  const pos = chg >= 0, c = pos?'bull-color':'bear-color';
+  const items = [
+    `<span class="tick-item"><span class="muted-color">SPX </span><span class="${c}">${f(cur)}</span></span>`,
+    `<span class="tick-item"><span class="muted-color">CHG </span><span class="${c}">${pos?'+':''}${f(chg)}</span></span>`,
+    `<span class="tick-item"><span class="muted-color">% </span><span class="${c}">${pos?'+':''}${pct.toFixed(2)}%</span></span>`,
+    `<span class="tick-item"><span class="muted-color">H </span><span class="bull-color">${f(high)}</span></span>`,
+    `<span class="tick-item"><span class="muted-color">L </span><span class="bear-color">${f(low)}</span></span>`,
+    `<span class="tick-item"><span class="muted-color">O </span>${f(open)}</span>`,
+    `<span class="tick-item"><span class="muted-color">PC </span>${f(prev)}</span>`,
+    `<span class="tick-item muted-color">VWAP≈ ${f(vwap)}</span>`,
+    `<span class="tick-item muted-color">YEETEX SPX OPEN ANALYZER · GITHUB PAGES</span>`,
+  ];
+  const row = items.join('');
+  document.getElementById('ticker-inner').innerHTML = row + row;
+}
+
+// ── CLOCK + SESSION ──────────────────────────────────────
+function updateClock() {
+  const now = new Date(), et = new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'}));
+  const h=String(et.getHours()).padStart(2,'0'),m=String(et.getMinutes()).padStart(2,'0'),s=String(et.getSeconds()).padStart(2,'0');
+  document.getElementById('clk').textContent=`${h}:${m}:${s} ET`;
+  const tot=et.getHours()*60+et.getMinutes(), sec=et.getHours()*3600+et.getMinutes()*60+et.getSeconds();
+  const ss=document.getElementById('ses-state'), st=document.getElementById('ses-timer');
+  const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  if(tot<9*60+30){ss.textContent='PRE-MARKET';ss.style.borderColor='var(--warn)';ss.style.color='var(--warn)';st.textContent='T-'+fmt(9*3600+30*60-sec);setPhase(1);}
+  else if(tot<9*60+45){ss.textContent='OR FORMING';ss.style.borderColor='var(--accent)';ss.style.color='var(--accent)';st.textContent=fmt(9*3600+45*60-sec);setPhase(2);}
+  else if(tot<10*60){ss.textContent='PRIME ENTRY';ss.style.borderColor='var(--bull)';ss.style.color='var(--bull)';st.textContent='+'+fmt(sec-9*3600);setPhase(3);}
+  else if(tot<10*60+30){ss.textContent='SECONDARY';ss.style.borderColor='var(--warn)';ss.style.color='var(--warn)';st.textContent='+'+fmt(sec-9*3600);setPhase(4);}
+  else if(tot<16*60){ss.textContent='OPEN';ss.style.borderColor='var(--muted)';ss.style.color='var(--muted)';st.textContent='ACTIVE';setPhase(4);}
+  else{ss.textContent='CLOSED';ss.style.borderColor='var(--text3)';ss.style.color='var(--text3)';st.textContent='AH';}
+}
+function setPhase(n){['ph0','ph1','ph2','ph3'].forEach((id,i)=>{document.getElementById(id).className='phase-step'+(i<n-1?' done':i===n-1?' active':'');});}
+function applyOR(){if(Object.keys(D).length){renderOR();renderSignals();}}
+function switchTab(t,el){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active'); document.getElementById('tab-'+t).classList.add('active');
+}
+
+// ── RISK ────────────────────────────────────────────────
+function setI(i,el){inst=i;['i-spy','i-mes','i-es'].forEach(id=>{const e=document.getElementById(id);e.style.borderColor='var(--border2)';e.style.color='var(--muted)';});el.style.borderColor='var(--accent)';el.style.color='var(--accent)';document.getElementById('inst-note').textContent=INOTE[i];}
+function setI2(i,el){inst2=i;['ai-spy','ai-mes','ai-es'].forEach(id=>{const e=document.getElementById(id);e.style.borderColor='var(--border2)';e.style.color='var(--muted)';});el.style.borderColor='var(--accent)';el.style.color='var(--accent)';}
+
+function calcR(){
+  const acc=parseFloat(document.getElementById('r-acc').value)||10000;
+  const risk=parseFloat(document.getElementById('r-risk').value)/100||.01;
+  const entry=parseFloat(document.getElementById('r-entry').value)||D.cur;
+  const sl=parseFloat(document.getElementById('r-sl').value);
+  const tp=parseFloat(document.getElementById('r-tp').value);
+  if(!entry||!sl) return;
+  const mult=MULT[inst], rd=acc*risk, dist=Math.abs(entry-sl);
+  const qty=Math.max(1,Math.floor(rd/(dist*mult)));
+  const rr=tp?(Math.abs(tp-entry)/dist).toFixed(2):'—';
+  const p=tp?(qty*Math.abs(tp-entry)*mult).toFixed(0):'—';
+  document.getElementById('rr-d').textContent='$'+rd.toFixed(0);
+  document.getElementById('rr-s').textContent=dist.toFixed(2)+' pts';
+  document.getElementById('rr-q').textContent=qty+' '+inst;
+  document.getElementById('rr-rr').textContent=tp?'1:'+rr:'—';
+  document.getElementById('rr-p').textContent=tp?'$'+p:'—';
+  const w=document.getElementById('rr-w');
+  if(tp&&parseFloat(rr)<2){w.textContent='⚠ R/R below 1:2 — not recommended';w.style.display='block';}else{w.style.display='none';}
+  document.getElementById('rres').classList.add('show');
+}
+
+function calcAdv(){
+  const acc=parseFloat(document.getElementById('a-acc').value)||10000;
+  const daily=parseFloat(document.getElementById('a-daily').value)/100||.02;
+  const risk=parseFloat(document.getElementById('a-risk').value)/100||.01;
+  const maxt=parseInt(document.getElementById('a-maxt').value)||3;
+  const entry=parseFloat(document.getElementById('a-en').value)||D.cur;
+  const sl=parseFloat(document.getElementById('a-sl').value);
+  const t1=parseFloat(document.getElementById('a-t1').value);
+  const t2=parseFloat(document.getElementById('a-t2').value);
+  if(!entry||!sl) return;
+  const mult=MULT[inst2], rd=acc*risk, dm=acc*daily, dist=Math.abs(entry-sl);
+  const qty=Math.max(1,Math.floor(rd/(dist*mult)));
+  const rr1=t1?(Math.abs(t1-entry)/dist).toFixed(2):null;
+  const rr2=t2?(Math.abs(t2-entry)/dist).toFixed(2):null;
+  const p1=t1?(qty*Math.abs(t1-entry)*mult).toFixed(0):null;
+  const p2=t2?(qty*Math.abs(t2-entry)*mult).toFixed(0):null;
+  document.getElementById('adv-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px">
+      <div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">RISK $</div><div style="font-size:21.25px;color:var(--bear)">$${rd.toFixed(0)}</div></div>
+      <div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">DAILY MAX</div><div style="font-size:21.25px;color:var(--bear)">$${dm.toFixed(0)}</div></div>
+      <div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">QTY (${inst2})</div><div style="font-size:21.25px;color:var(--accent)">${qty}</div></div>
+      <div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">MAX/DAY</div><div style="font-size:21.25px">${maxt}</div></div>
+    </div>
+    ${rr1?`<div class="rrow"><span class="muted-color">TP1 (${t1})</span><span class="bull-color">1:${rr1} → +$${p1}</span></div>`:''}
+    ${rr2?`<div class="rrow"><span class="muted-color">TP2 (${t2})</span><span class="bull-color">1:${rr2} → +$${p2}</span></div>`:''}
+    <div class="rrow"><span class="muted-color">Stop dist</span><span>${dist.toFixed(2)} pts</span></div>
+    ${rr1&&parseFloat(rr1)<2?'<div style="margin-top:5px;padding:5px;background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.2);font-size:11.25px;color:var(--warn)">⚠ R/R below 1:2</div>':'<div style="margin-top:5px;padding:5px;background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.15);font-size:11.25px;color:var(--bull)">✓ R/R acceptable</div>'}
+  `;
+  document.getElementById('adv-res').style.display='block';
+}
+
+// ── CHECKLIST ────────────────────────────────────────────
+const CL=[
+  {g:'PRE-MARKET (before 9:30)',c:'var(--accent)',items:['Check economic calendar — HIGH impact events today?','Read pre-market news — catalyst?','Mark prev day High, Low, Close on chart','Check ES1!/SPX H1+M15 futures trend','Identify gap direction and size (>0.3% = significant)','Check VIX — above 20 = reduce size','Check DXY direction (inverse to SPX)','Note H4 structure (HH/HL vs LH/LL)']},
+  {g:'OR FORMATION (9:30–9:45)',c:'var(--warn)',items:['NO TRADES during 9:30–9:45. Watch only.','Mark OR High (first 15-min range high)','Mark OR Low (first 15-min range low)','Note VWAP relative to OR box','Determine scenario: Gap&Go / Fill / V-Recovery / Fade','Enter OR values into Manual Override panel']},
+  {g:'ENTRY WINDOW (9:45–10:00)',c:'var(--bull)',items:['Wait for confirmed OR break (M5 close outside OR)','Wait for retest of broken OR level','Confirm VWAP alignment with direction','Calculate position size BEFORE entering','Set stop loss at OR boundary','R/R minimum 1:2 confirmed','No HIGH macro events in next 30 min']},
+  {g:'TRADE MANAGEMENT',c:'var(--text3)',items:['Move SL to breakeven after +1R','Take 50% off at TP1','Trail stop on remainder','Close all before 10:30 if no trend','Max 2 losses → stop for the day']},
+];
+function buildCL(){
+  const sv=JSON.parse(localStorage.getItem('yeetex-cl')||'{}');
+  document.getElementById('cl-container').innerHTML=CL.map((g,gi)=>
+    `<div style="border:1px solid var(--border);padding:11px 13px;margin-bottom:9px">
+      <div style="font-size:11.25px;letter-spacing:3px;color:${g.c};margin-bottom:8px">${gi+1} · ${g.g}</div>
+      <div>${g.items.map((item,ii)=>{const k=`${gi}-${ii}`,chk=sv[k];return`<div class="ci${chk?' done':''}" onclick="toggleCI(this,'${k}')"><div class="cb${chk?' chk':''}">${chk?'✓':'·'}</div><div class="ct">${item}</div></div>`;}).join('')}</div>
+    </div>`
+  ).join('');
+  updateCLProg();
+}
+function toggleCI(el,k){const cb=el.querySelector('.cb'),chk=cb.classList.toggle('chk');cb.textContent=chk?'✓':'·';el.classList.toggle('done',chk);const sv=JSON.parse(localStorage.getItem('yeetex-cl')||'{}');if(chk)sv[k]=true;else delete sv[k];localStorage.setItem('yeetex-cl',JSON.stringify(sv));updateCLProg();}
+function updateCLProg(){const a=document.querySelectorAll('#cl-container .ci').length,d=document.querySelectorAll('#cl-container .ci.done').length;document.getElementById('cl-prog').textContent=`${d} / ${a} completed`;}
+function resetCL(){localStorage.removeItem('yeetex-cl');buildCL();}
+
+// ── NOTES ────────────────────────────────────────────────
+function loadNotes(){const t=new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});const s=localStorage.getItem('yeetex-notes-'+t);if(s)document.getElementById('notes').value=s;}
+function saveNotes(){const t=new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});localStorage.setItem('yeetex-notes-'+t,document.getElementById('notes').value);const btn=event.target,orig=btn.textContent;btn.textContent='SAVED ✓';btn.style.color='var(--bull)';btn.style.borderColor='var(--bull)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.style.borderColor='';},1500);}
+
+// ── TRACKER ──────────────────────────────────────────────
+let sessions=JSON.parse(localStorage.getItem('yeetex-sessions')||'[]');
+const today=new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
+function logDay(r){sessions.push({date:today,r});localStorage.setItem('yeetex-sessions',JSON.stringify(sessions));renderTracker();}
+function renderTracker(){document.getElementById('tdots').innerHTML=sessions.slice(-30).map(s=>{const c=s.r==='W'?'var(--bull)':s.r==='L'?'var(--bear)':'var(--muted)';return`<div title="${s.date}" style="width:13px;height:13px;background:${c};display:flex;align-items:center;justify-content:center;font-size:8.75px;color:var(--bg);font-weight:700">${s.r}</div>`;}).join('');const w=sessions.filter(s=>s.r==='W').length,l=sessions.filter(s=>s.r==='L').length,sk=sessions.filter(s=>s.r==='S').length;document.getElementById('wc').textContent=w;document.getElementById('lc').textContent=l;document.getElementById('sc').textContent=sk;document.getElementById('wr').textContent=(w+l)?((w/(w+l)*100).toFixed(0)+'%'):'—';}
+
+// ── JOURNAL ──────────────────────────────────────────────
+let journal=JSON.parse(localStorage.getItem('yeetex-journal')||'[]');
+function addJE(){const setup=document.getElementById('j-setup').value;if(!setup){alert('Select setup');return;}journal.unshift({date:document.getElementById('j-date').value,setup,entry:parseFloat(document.getElementById('j-en').value),exit:parseFloat(document.getElementById('j-ex').value),pnl:parseFloat(document.getElementById('j-pnl').value),notes:document.getElementById('j-notes').value});localStorage.setItem('yeetex-journal',JSON.stringify(journal));renderJournal();['j-en','j-ex','j-pnl','j-notes'].forEach(id=>document.getElementById(id).value='');}
+function renderJournal(){const list=document.getElementById('j-list');if(!journal.length){list.innerHTML='<div class="muted-color" style="font-size:12.5px;padding:14px 0;text-align:center">No entries</div>';updateJStats();return;}list.innerHTML=journal.map((e,i)=>{const pc=e.pnl>0?'var(--bull)':e.pnl<0?'var(--bear)':'var(--muted)';return`<div class="je"><div class="je-date">${e.date||'—'}</div><div class="je-body"><div style="font-weight:600;color:var(--text)">${e.setup}</div><div style="font-size:11.25px;color:var(--muted);font-family:var(--sans)">${e.notes||'—'}</div></div><div class="je-pnl" style="color:${pc}">${e.pnl>0?'+':''}${e.pnl} pts</div><div onclick="delJE(${i})" style="font-size:12.5px;color:var(--text3);cursor:pointer;padding:0 4px">✕</div></div>`;}).join('');updateJStats();}
+function delJE(i){journal.splice(i,1);localStorage.setItem('yeetex-journal',JSON.stringify(journal));renderJournal();}
+function updateJStats(){const t=journal.filter(e=>!isNaN(e.pnl)&&e.pnl!==undefined);if(!t.length){document.getElementById('j-stats').innerHTML='<div class="muted-color" style="font-size:12.5px">No entries</div>';return;}const w=t.filter(e=>e.pnl>0).length,tot=t.reduce((s,e)=>s+e.pnl,0),aw=w?t.filter(e=>e.pnl>0).reduce((s,e)=>s+e.pnl,0)/w:0,al=(t.length-w)?t.filter(e=>e.pnl<0).reduce((s,e)=>s+e.pnl,0)/(t.length-w):0;document.getElementById('j-stats').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">WIN RATE</div><div style="font-size:21.25px;color:var(--bull)">${(w/t.length*100).toFixed(0)}%</div></div><div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">TOTAL PNL</div><div style="font-size:21.25px;color:${tot>=0?'var(--bull)':'var(--bear)'}">${tot>=0?'+':''}${tot.toFixed(1)} pts</div></div><div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">AVG WIN</div><div style="font-size:16.25px;color:var(--bull)">+${aw.toFixed(1)}</div></div><div style="padding:7px;background:var(--bg3);border:1px solid var(--border)"><div class="il" style="margin-bottom:2px">AVG LOSS</div><div style="font-size:16.25px;color:var(--bear)">${al.toFixed(1)}</div></div></div><div style="margin-top:5px;font-size:11.25px;color:var(--muted)">${t.length} trades logged</div>`;}
+</script>
+</body>
+</html>
