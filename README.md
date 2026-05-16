@@ -2,7 +2,7 @@
 
 Bloomberg-style S&P500 trading dashboard for US Open strategy (9:30–10:30 ET).
 
-**Live demo:** https://YOUR-USERNAME.github.io/spx-analyzer
+** https://YOUR-USERNAME.github.io/spx-analyzer
 
 ## Features
 - Real SPX price from Yahoo Finance ^GSPC (no key needed)
