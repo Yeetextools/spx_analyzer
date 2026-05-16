@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,12 +30,13 @@ body {
   background: var(--bg); 
   color: var(--text); 
   font-family: var(--mono); 
-  font-size: 17.25px; /* Увеличено на 15% с 15px */
+  font-size: 17.25px; /* Increased by 15% from 15px */
   min-height: 100vh; 
   overflow-x: hidden; 
+  width: 100%;
 }
 
-/* Глобальное увеличение шрифтов элементов на 15% */
+/* Global Font Scale Updates (+15%) */
 .logo-text { font-size: 18.15px; font-weight: 600; color: #fff; letter-spacing: 1px; }
 .logo-sub { font-size: 13.2px; color: var(--accent); letter-spacing: 2px; }
 .clock { font-size: 17.25px; color: var(--text2); }
@@ -47,32 +48,74 @@ body {
 .btn { font-size: 16.4px; font-family: var(--mono); cursor: pointer; padding: 6px 12px; }
 .api-input { font-size: 14.7px; }
 
-header { background: var(--bg4); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-.api-banner { background: #1a233a; border-bottom: 1px solid #2c3e6b; padding: 8px 20px; display: flex; gap: 10px; align-items: center; font-size: 16.4px; }
+header { 
+  background: var(--bg4); 
+  border-bottom: 1px solid var(--border); 
+  padding: 12px 20px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  width: 100%;
+}
+.api-banner { 
+  background: #1a233a; 
+  border-bottom: 1px solid #2c3e6b; 
+  padding: 8px 20px; 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+  font-size: 16.4px; 
+  width: 100%;
+}
 .api-input { background: var(--bg4); border: 1px solid var(--border); color: #fff; padding: 4px 8px; width: 250px; }
 
-.layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; padding: 15px; }
-.panel { background: var(--bg2); border: 1px solid var(--border); padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-.panel-title { font-size: 16.4px; font-weight: 600; color: var(--text2); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+/* Stretched Layout Optimization for Full Screen Width usage */
+.layout { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 20px; 
+  padding: 20px; 
+  width: 100%;
+  max-width: 100%; /* Spans full screen width completely */
+}
+.panel { 
+  background: var(--bg2); 
+  border: 1px solid var(--border); 
+  padding: 20px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+}
+.panel-title { 
+  font-size: 16.4px; 
+  font-weight: 600; 
+  color: var(--text2); 
+  border-bottom: 1px solid var(--border); 
+  padding-bottom: 8px; 
+  margin-bottom: 5px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
 
-/* DIRECTIONAL BIAS: Строгий деловой стиль и увеличение шкалы на 25% */
+/* DIRECTIONAL BIAS: Clean, corporate style and +25% scale increase */
 .bias-container {
   background: var(--bg4);
   border: 2px solid var(--border);
-  padding: 12px;
+  padding: 15px;
 }
 .bias-wrap { 
-  height: 10px; /* Увеличено на 25% с 8px */
+  height: 10px; /* Increased by 25% from 8px */
   background: #111519; 
   border: 1px solid #3a5266; 
   overflow: hidden; 
-  margin: 12px 0; 
+  margin: 14px 0; 
   position: relative; 
 }
 .bias-fill { height: 100%; transition: width .6s cubic-bezier(0.25, 1, 0.5, 1); background: var(--accent); }
 .bias-labels { display: flex; justify-content: space-between; font-size: 13.8px; color: var(--text2); }
 
-/* Выделение BEARISH в строгом корпоративном стиле */
+/* Clean, Strict Corporate Highlighting for Active Bearish Bias */
 .bias-bearish-active {
   border: 2px solid var(--bear) !important;
   background: linear-gradient(135deg, #1f1317 0%, var(--bg4) 100%) !important;
@@ -84,25 +127,25 @@ header { background: var(--bg4); border-bottom: 1px solid var(--border); padding
   text-transform: uppercase;
 }
 
-/* Календарь макроэкономики */
-.ev-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
-.ev-row { display: flex; align-items: center; gap: 10px; padding: 6px; background: var(--bg3); border: 1px solid var(--border); }
-.ev-time { color: var(--accent); font-size: 15.5px; width: 50px; min-width: 50px; }
+/* Macroeconomic Events Calendar List */
+.ev-list { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; }
+.ev-row { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--bg3); border: 1px solid var(--border); }
+.ev-time { color: var(--accent); font-size: 15.5px; width: 55px; min-width: 55px; }
 .ev-name { flex-grow: 1; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ev-badge { font-size: 11.5px; padding: 2px 6px; font-weight: 600; border-radius: 0px; text-align: center; width: 55px; }
 
-/* Сетка секторов */
-.sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.sec-item { background: var(--bg3); border: 1px solid var(--border); padding: 8px; display: flex; justify-content: space-between; }
+/* Sector Grid Layout */
+.sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sec-item { background: var(--bg3); border: 1px solid var(--border); padding: 10px; display: flex; justify-content: space-between; }
 
-/* Калькулятор Рисков и Чек-лист */
-.rfield { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.rfield input, .rfield select { background: var(--bg4); border: 1px solid var(--border); color: #fff; padding: 4px 8px; width: 110px; text-align: right; font-family: var(--mono); font-size: 16px; }
-.cl-group { margin-bottom: 12px; }
-.cl-item { display: flex; gap: 8px; margin-top: 6px; font-size: 15.5px; color: var(--text); align-items: flex-start; }
+/* Position Sizer and Restructured Checklist UI elements */
+.rfield { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.rfield input, .rfield select { background: var(--bg4); border: 1px solid var(--border); color: #fff; padding: 5px 10px; width: 130px; text-align: right; font-family: var(--mono); font-size: 16px; }
+.cl-group { margin-bottom: 15px; }
+.cl-item { display: flex; gap: 10px; margin-top: 8px; font-size: 15.5px; color: var(--text); align-items: flex-start; line-height: 1.4; }
 .cl-item input { margin-top: 4px; }
 
-.btn-sync { background: #2c3e50; border: 1px solid #34495e; color: #fff; padding: 2px 8px; font-size: 13px; font-weight: bold; }
+.btn-sync { background: #2c3e50; border: 1px solid #34495e; color: #fff; padding: 4px 10px; font-size: 13px; font-weight: bold; cursor: pointer; }
 .btn-sync:hover { background: var(--accent); color: #000; }
 .muted { color: var(--muted); }
 </style>
@@ -111,7 +154,7 @@ header { background: var(--bg4); border-bottom: 1px solid var(--border); padding
 
 <div class="api-banner">
   <span>FINNHUB API KEY:</span>
-  <input type="text" id="api-key" class="api-input" placeholder="Вставьте ключ для синхронизации секторов...">
+  <input type="text" id="api-key" class="api-input" placeholder="Paste your API key here...">
   <button class="btn" style="background:var(--border); color:#fff;" onclick="saveKey()">CONNECT</button>
 </div>
 
@@ -125,6 +168,7 @@ header { background: var(--bg4); border-bottom: 1px solid var(--border); padding
 
 <div class="layout">
   
+  <!-- COLUMN 1: MARKET METRICS & SECTOR FLOWS -->
   <div class="panel">
     <div class="panel-title">MARKET METRICS</div>
     <div style="display:flex; justify-content:space-between; align-items:baseline;">
@@ -132,6 +176,7 @@ header { background: var(--bg4); border-bottom: 1px solid var(--border); padding
       <div class="price-change" id="spx-chg">0.00%</div>
     </div>
     
+    <!-- Directional Bias Score Box (Strict Business Style) -->
     <div class="bias-container" id="bias-box">
       <div style="display:flex; justify-content:space-between; font-weight:500;">
         <span>DIRECTIONAL BIAS:</span>
@@ -148,75 +193,77 @@ header { background: var(--bg4); border-bottom: 1px solid var(--border); padding
 
     <div class="panel-title">SECTOR ETF FLOWS</div>
     <div class="sec-grid" id="sectors-container">
-      <div class="sec-item"><span class="muted">XLK</span><span id="s-XLK">--</span></div>
-      <div class="sec-item"><span class="muted">XLF</span><span id="s-XLF">--</span></div>
-      <div class="sec-item"><span class="muted">XLY</span><span id="s-XLY">--</span></div>
-      <div class="sec-item"><span class="muted">XLC</span><span id="s-XLC">--</span></div>
-      <div class="sec-item"><span class="muted">XLI</span><span id="s-XLI">--</span></div>
-      <div class="sec-item"><span class="muted">XLV</span><span id="s-XLV">--</span></div>
-      <div class="sec-item"><span class="muted">XLP</span><span id="s-XLP">--</span></div>
-      <div class="sec-item"><span class="muted">XLE</span><span id="s-XLE">--</span></div>
+      <div class="sec-item"><span class="muted">XLK (Tech)</span><span id="s-XLK">--</span></div>
+      <div class="sec-item"><span class="muted">XLF (Financials)</span><span id="s-XLF">--</span></div>
+      <div class="sec-item"><span class="muted">XLY (Discretionary)</span><span id="s-XLY">--</span></div>
+      <div class="sec-item"><span class="muted">XLC (Communication)</span><span id="s-XLC">--</span></div>
+      <div class="sec-item"><span class="muted">XLI (Industrials)</span><span id="s-XLI">--</span></div>
+      <div class="sec-item"><span class="muted">XLV (Healthcare)</span><span id="s-XLV">--</span></div>
+      <div class="sec-item"><span class="muted">XLP (Staples)</span><span id="s-XLP">--</span></div>
+      <div class="sec-item"><span class="muted">XLE (Energy)</span><span id="s-XLE">--</span></div>
     </div>
   </div>
 
+  <!-- COLUMN 2: OPENING RANGE & MACRO CALENDAR -->
   <div class="panel">
     <div class="panel-title">
-      <span>OPENING RANGE (9:30 AM)</span>
+      <span>OPENING RANGE (9:30 AM NY)</span>
       <button class="btn-sync" onclick="fetchAutomatedOR()">AUTO SYNC</button>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
-      <div style="background:var(--bg3); padding:10px; border:1px solid var(--border);">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; text-align:center;">
+      <div style="background:var(--bg3); padding:12px; border:1px solid var(--border);">
         <div style="font-size:13px; color:var(--text2)">OR HIGH (M5/M15)</div>
         <div class="or-val" id="or-high-val" style="color:var(--accent)">0.00</div>
       </div>
-      <div style="background:var(--bg3); padding:10px; border:1px solid var(--border);">
+      <div style="background:var(--bg3); padding:12px; border:1px solid var(--border);">
         <div style="font-size:13px; color:var(--text2)">OR LOW (M5/M15)</div>
         <div class="or-val" id="or-low-val" style="color:var(--accent)">0.00</div>
       </div>
     </div>
     
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
       <div class="rfield"><span>Manual H:</span><input type="number" id="m-orh" step="0.1" oninput="applyManualOR()"></div>
       <div class="rfield"><span>Manual L:</span><input type="number" id="m-orl" step="0.1" oninput="applyManualOR()"></div>
     </div>
 
     <div class="panel-title">ECONOMIC CALENDAR (US ONLY)</div>
     <div class="ev-list" id="calendar-container">
-      <div class="muted" style="font-size:14px; padding:10px;">Загрузка экономических событий...</div>
+      <div class="muted" style="font-size:14px; padding:10px;">Loading macroeconomic releases...</div>
     </div>
   </div>
 
+  <!-- COLUMN 3: POSITION SIZER & HIGHEST-VALUE CHECKLIST -->
   <div class="panel">
     <div class="panel-title">RISK CALCULATOR (POSITION SIZER)</div>
-    <div style="background:var(--bg4); padding:12px; border:1px solid var(--border);">
+    <div style="background:var(--bg4); padding:15px; border:1px solid var(--border);">
       <div class="rfield">
-        <span>Депозит ($):</span>
+        <span>Account Balance ($):</span>
         <input type="number" id="rc-cap" value="10000" oninput="calcSize()">
       </div>
       <div class="rfield">
-        <span>Риск на сделку (%):</span>
+        <span>Risk Per Trade (%):</span>
         <input type="number" id="rc-rsk" value="1" step="0.1" oninput="calcSize()">
       </div>
       <div class="rfield">
-        <span>Размер Стопа (pts):</span>
+        <span>Stop Loss Size (pts):</span>
         <input type="number" id="rc-sl" value="5" step="0.25" oninput="calcSize()">
       </div>
       <div class="rfield">
-        <span>Инструмент:</span>
+        <span>Trading Instrument:</span>
         <select id="rc-inst" onchange="calcSize()">
           <option value="50">ES (Full $50/pt)</option>
           <option value="5" selected>MES (Micro $5/pt)</option>
           <option value="100">SPY Shares (approx)</option>
         </select>
       </div>
-      <div style="margin-top:12px; padding-top:8px; border-top:1px dashed var(--border); display:flex; justify-content:space-between; font-weight:600;">
-        <span>РЕКОМЕНДУЕМЫЙ ОБЪЕМ:</span>
-        <span id="rc-res" style="color:var(--bull)">0.0 Контрактов</span>
+      <div style="margin-top:15px; padding-top:10px; border-top:1px dashed var(--border); display:flex; justify-content:space-between; font-weight:600;">
+        <span>RECOMMENDED SIZE:</span>
+        <span id="rc-res" style="color:var(--bull)">0.0 Contracts</span>
       </div>
     </div>
 
     <div class="panel-title">PRE-TRADE CHECKLIST</div>
-    <div id="checklist-container" style="max-height:280px; overflow-y:auto;"></div>
+    <div id="checklist-container" style="max-height:300px; overflow-y:auto;"></div>
   </div>
 
 </div>
@@ -231,44 +278,44 @@ function saveKey() {
   fetchAll();
 }
 
-// Обновление часов (Нью-Йорк)
+// Live Clock System Sync (New York Eastern Time)
 setInterval(() => {
   const options = { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
   document.getElementById('live-clock').innerText = new Intl.DateTimeFormat([], options).format(new Date()) + " NY";
 }, 1000);
 
-// Сокращенный и переработанный чек-лист (3-4 ключевых пункта)
+// Streamlined High-Value Checklist (3-4 explicit data items per section)
 const CL = [
   {
-    g: '1. PRE-MARKET АНАЛИЗ (До 9:30)',
+    g: '1. PRE-MARKET STRUCTURAL BIAS (Before 9:30)',
     items: [
-      'Проверить календарь США: есть ли отчеты высокой важности (HIGH)?',
-      'Выделить ключевые пулы ликвидности (H/L прошлых дней) и FVG на H4/H1.',
-      'Оценить динамику DXY/VIX для подтверждения общих рыночных условий.'
+      'Check US economic calendar: identify any HIGH impact scheduled macro events.',
+      'Mark major institutional pools (Previous Day H/L) and structural FVGs on H4/H1.',
+      'Analyze DXY and VIX divergence matrix to map out structural order flow bias.'
     ]
   },
   {
-    g: '2. ФОРМИРОВАНИЕ OR (9:30–9:45)',
+    g: '2. OPENING RANGE MEASUREMENT (9:30–9:45)',
     items: [
-      'Дождаться закрытия первых 15 минут сессии, не открывая позиций.',
-      'Зафиксировать автоматические или ручные границы High/Low диапазона.',
-      'Оценить агрессивность рыночных покупок/продаж по характеру свечей M5.'
+      'Execute no trades during the initial 15 minutes of the opening bell expansion.',
+      'Log and verify automated or manually assigned High and Low boundaries of the OR.',
+      'Identify presence of institutional block sponsorship via aggressive M5 candle delivery.'
     ]
   },
   {
-    g: '3. ВХОД И ТРИГГЕРЫ (9:45–10:30)',
+    g: '3. POSITION ENTRY CRITERIA (9:45–10:30)',
     items: [
-      'Дождаться снятия ликвидности (Sweep) или слома структуры (MSS) на M5.',
-      'Использовать подтвержденный возврат цены в рамки диапазона (OR Fade).',
-      'Проверить соотношение Риск/Прибыль (строго от 1:2).'
+      'Wait for clear liquidity sweep or sharp Market Structure Shift (MSS) on M5/M15.',
+      'Confirm clean price rejection and re-entry into opening range bounds (OR Fade).',
+      'Verify execution criteria satisfies risk-to-reward ratio thresholds strictly over 1:2.'
     ]
   },
   {
-    g: '4. УПРАВЛЕНИЕ РИСКАМИ',
+    g: '4. ACTIVE RISK MANAGEMENT',
     items: [
-      'Перевести позицию в безубыток при достижении первой цели (+1R).',
-      'Зафиксировать 50% объема на ближайшем значимом пуле ликвидности.',
-      'Соблюдать лимит сессии: максимум 2 системных убытка в день.'
+      'Shift stop-loss coordinates strictly to break-even once price breaches +1R targets.',
+      'Execute partial take-profit order (50%) at the terminal external liquidity pool.',
+      'Strict session hard-stop: instantly lock workspace after maximum 2 daily losses.'
     ]
   }
 ];
@@ -276,7 +323,7 @@ const CL = [
 function renderChecklist() {
   let html = '';
   CL.forEach((grp, gIdx) => {
-    html += `<div class="cl-group"><div style="font-size:14px; font-weight:600; color:var(--accent);">${grp.g}</div>`;
+    html += `<div class="cl-group"><div style="font-size:14px; font-weight:600; color:var(--accent); text-transform:uppercase;">${grp.g}</div>`;
     grp.items.forEach((item, iIdx) => {
       html += `
         <label class="cl-item">
@@ -290,7 +337,7 @@ function renderChecklist() {
   document.getElementById('checklist-container').innerHTML = html;
 }
 
-// Расчет объема позиции
+// Interactive Position Sizing Math
 function calcSize() {
   const cap = parseFloat(document.getElementById('rc-cap').value) || 0;
   const rskPct = parseFloat(document.getElementById('rc-rsk').value) || 0;
@@ -298,20 +345,20 @@ function calcSize() {
   const mult = parseFloat(document.getElementById('rc-inst').value) || 5;
   
   if (cap <= 0 || rskPct <= 0 || sl <= 0) {
-    document.getElementById('rc-res').innerText = "0.0 ед.";
+    document.getElementById('rc-res').innerText = "0.0 Units";
     return;
   }
   
   const riskAmount = cap * (rskPct / 100);
   const size = riskAmount / (sl * mult);
-  const unitLabel = mult === 100 ? "Акций" : "Контрактов";
+  const unitLabel = mult === 100 ? "Shares" : "Contracts";
   document.getElementById('rc-res').innerText = `${size.toFixed(1)} ${unitLabel}`;
 }
 
-// Автоматический расчет уровней открытия US Open 9:30 AM (M5/M15 диапазон)
+// Automated Opening Range Calculation (M5/M15 Extraction)
 async function fetchAutomatedOR() {
   if (!KEY) {
-    alert("Пожалуйста, укажите действующий Finnhub API Key в верхней строке панели.");
+    alert("Please assign a valid Finnhub API Key in the top connection panel first.");
     return;
   }
   
@@ -319,7 +366,6 @@ async function fetchAutomatedOR() {
   const nyString = now.toLocaleString("en-US", {timeZone: "America/New_York"});
   const nyDate = new Date(nyString);
   
-  // Создаем временные метки для окна 9:30 - 9:45 EST сегодняшнего дня
   const startOR = new Date(nyDate);
   startOR.setHours(9, 30, 0, 0);
   const endOR = new Date(nyDate);
@@ -330,17 +376,17 @@ async function fetchAutomatedOR() {
   const currentUnix = Math.floor(Date.now() / 1000);
 
   if (currentUnix < endUnix) {
-    alert("Диапазон Opening Range (9:30 - 9:45 AM NY) еще формируется или сессия не открыта.");
+    alert("Opening Range interval (9:30 - 9:45 AM NY Time) has not formed completely yet.");
     return;
   }
 
   try {
-    // Получаем 5-минутные свечи (resolution=5) индекса через прокси-тикер SPY
+    // Queries index status metrics dynamically using highly liquid SPY ETF candles proxy
     const res = await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=SPY&resolution=5&from=${startUnix}&to=${endUnix}&token=${KEY}`);
     const data = await res.json();
 
     if (data.s === "ok" && data.h && data.h.length > 0) {
-      // Коррелируем цену SPY к значениям SPX (множитель 10)
+      // Maps price values accurately to approximate SPX coordinates using 10x multiplier
       const highLevel = Math.max(...data.h) * 10;
       const lowLevel = Math.min(...data.l) * 10;
 
@@ -351,10 +397,10 @@ async function fetchAutomatedOR() {
       document.getElementById('or-low-val').innerText = lowLevel.toFixed(2);
       console.log(`[Auto-OR Success] High: ${highLevel}, Low: ${lowLevel}`);
     } else {
-      alert("Не удалось получить данные свечей за открытие сессии. Убедитесь, что день торговый.");
+      alert("No raw candle data returned. Ensure today is an active trading session.");
     }
   } catch (e) {
-    console.error("Ошибка автоматического расчета уровней OR:", e);
+    console.error("Failed to automatically synchronize OR matrix levels:", e);
   }
 }
 
@@ -365,20 +411,18 @@ function applyManualOR() {
   document.getElementById('or-low-val').innerText = l > 0 ? l.toFixed(2) : "0.00";
 }
 
-// Загрузка экономического календаря с фильтрацией по трем шкалам важности
+// Real-Time Macro Calendar Parsing with 3 Tiered Impact Scale Mapping
 async function fetchEconomicCalendar() {
   try {
     const container = document.getElementById('calendar-container');
-    // Используем открытый API поставщика через CORS-прокси для получения актуальных данных событий
     const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://nfs.faireconomy.media/ff_calendar_thisweek.json'));
     const raw = await res.json();
     const events = JSON.parse(raw.contents);
     
-    // Оставляем только текущие макрособытия в США
     const usEvents = events.filter(e => e.country === 'USD').slice(0, 12);
     
     if(!usEvents.length) {
-      container.innerHTML = '<div class="muted" style="font-size:14px;">Нет важных макроэкономических публикаций на сегодня.</div>';
+      container.innerHTML = '<div class="muted" style="font-size:14px;">No major macro releases scheduled for this session.</div>';
       return;
     }
 
@@ -409,19 +453,19 @@ async function fetchEconomicCalendar() {
     });
     container.innerHTML = html;
   } catch(e) {
-    document.getElementById('calendar-container').innerHTML = '<div class="muted" style="font-size:14px;">Ошибка загрузки календаря макроданных.</div>';
+    document.getElementById('calendar-container').innerHTML = '<div class="muted" style="font-size:14px;">Error reading active macro calendar streams.</div>';
   }
 }
 
-// Эмуляция базовых данных котировок SPX и Сентимента для демонстрации стилей
+// Structural State Mapping Simulation Engine
 function updateMarketData() {
-  const mockPrice = 5140.25 + (Math.random() - 0.5) * 5;
+  const mockPrice = 5142.75 + (Math.random() - 0.5) * 4;
   document.getElementById('spx-price').innerText = mockPrice.toFixed(2);
-  document.getElementById('spx-chg').innerText = "-0.42%";
+  document.getElementById('spx-chg').innerText = "-0.45%";
   document.getElementById('spx-chg').style.color = "var(--bear)";
   
-  // Демонстрация строгого стиля DIRECTIONAL BIAS при Bearish сценарии
-  const mockBias = 34; // Меньше 42% указывает на нисходящий приоритет
+  // Highlighting Bearish Structural Shift Configuration
+  const mockBias = 32; // Value below 42 forces a clean bearish alert mode trigger
   const bar = document.getElementById('bias-bar');
   const txt = document.getElementById('bias-text');
   const box = document.getElementById('bias-box');
@@ -443,7 +487,7 @@ function fetchAll() {
   calcSize();
 }
 
-// Инициализация при старте страницы
+// Dashboard Startup Routine
 renderChecklist();
 fetchAll();
 setInterval(updateMarketData, 5000);
